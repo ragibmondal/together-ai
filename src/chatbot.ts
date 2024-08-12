@@ -1,48 +1,28 @@
-import * as readline from 'readline';
+import { VercelRequest, VercelResponse } from '@vercel/node';
 import Together from 'together-ai';
+import dotenv from 'dotenv';
 
-// Initialize the Together AI client
-const together = new Together('YOUR_API_KEY');
+dotenv.config();
 
-// Create a readline interface for user input
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout
-});
+const together = new Together(process.env.TOGETHER_API_KEY);
 
-async function chat() {
-  const messages: { role: 'user' | 'assistant'; content: string }[] = [];
-
-  console.log('Welcome to the Together AI Chatbot!');
-  console.log('Type "exit" to end the conversation.');
-
-  while (true) {
-    const userInput = await new Promise<string>((resolve) => {
-      rl.question('You: ', resolve);
-    });
-
-    if (userInput.toLowerCase() === 'exit') {
-      console.log('Goodbye!');
-      rl.close();
-      break;
-    }
-
-    messages.push({ role: 'user', content: userInput });
-
+export default async function handler(req: VercelRequest, res: VercelResponse) {
+  if (req.method === 'POST') {
     try {
+      const { messages } = req.body;
+
       const completion = await together.chat.completions.create({
         model: 'meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo',
         messages: messages,
       });
 
       const assistantResponse = completion.choices[0].message.content;
-      console.log('Assistant:', assistantResponse);
-
-      messages.push({ role: 'assistant', content: assistantResponse });
+      res.status(200).json({ response: assistantResponse });
     } catch (error) {
       console.error('Error:', error);
+      res.status(500).json({ error: 'An error occurred while processing your request.' });
     }
+  } else {
+    res.status(405).json({ error: 'Method not allowed' });
   }
 }
-
-chat();
