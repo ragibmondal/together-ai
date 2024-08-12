@@ -1,0 +1,26 @@
+{
+  "name": "together-ai-chatbot",
+  "version": "1.0.0",
+  "description": "A simple chatbot using Together AI API",
+  "main": "chatbot.ts",
+  "scripts": {
+    "start": "ts-node chatbot.ts",
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "chatbot",
+    "together-ai",
+    "typescript"
+  ],
+  "author": "Ragib Hasan",
+  "license": "MIT",
+  "dependencies": {
+    "together-ai": "^0.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^18.0.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.9.5"
+  }
+}
